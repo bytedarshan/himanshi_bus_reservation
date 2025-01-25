@@ -347,6 +347,8 @@ def book_ticket(cursor, conn):
             # Otherwise, update the existing record
             cursor.execute("UPDATE availability SET available_seats = %s WHERE route_id = %s AND date = %s", 
                            (new_available_seats, route_id, doj_date))
+            cursor.execute("UPDATE route SET seats = %s WHERE route_id = %s", 
+                           (new_available_seats, route_id))
 
         # Commit the changes
         conn.commit()
@@ -368,7 +370,7 @@ def seat_availability(cursor):
 
     try:
         route_id = int(input("Enter Route ID to check availability: "))
-        cursor.execute("SELECT * FROM route WHERE ROUTE_ID = %s", (route_id,))
+        cursor.execute("SELECT * FROM availability WHERE ROUTE_ID = %s", (route_id,))
         route = cursor.fetchone()
         if not route:
             print("Route ID not found!")
